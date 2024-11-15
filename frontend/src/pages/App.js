@@ -66,7 +66,7 @@ const App = () => {
 
   return (
     <Layout>
-      <div className="container mx-auto px-4 py-8 relative">
+      <div className="container mx-auto px-2 py-8 relative">
         {successMessage && (
           <div className="fixed top-4 left-1/2 transform -translate-x-1/2 w-8/12 bg-opacity-90 sm:w-2/5 md:w-1/4 bg-green-500 text-white py-2 px-4 rounded-md text-center shadow-lg">
             {successMessage}
