@@ -1,4 +1,3 @@
-// import { motion } from 'framer-motion'; // Import Framer Motion
 import { useState,useEffect } from 'react';
 
 // Cursor Follow Component

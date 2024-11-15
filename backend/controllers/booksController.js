@@ -1,8 +1,6 @@
-// booksController.js
 import Book from '../models/Book.js';
 
 const booksController = {
-  // Get all books
   getAllBooks: async (req, res) => {
     try {
       const books = await Book.find();
@@ -12,36 +10,45 @@ const booksController = {
     }
   },
 
-  // Create a new book (without file upload)
   createBook: async (req, res) => {
     const { title, author, description } = req.body;
-
-    // Create a new book object without the imageUrl field
     const book = new Book({ title, author, description });
 
     try {
       const newBook = await book.save();
-      console.log("Book Details:", newBook);
       res.status(201).json(newBook);
     } catch (error) {
       res.status(400).json({ message: error.message });
     }
   },
 
-  // Delete a book by id
   deleteBook: async (req, res) => {
     const { id } = req.params;
 
     try {
-      const book = await Book.findByIdAndDelete(id);
-      if (!book) {
-        return res.status(404).json({ message: 'Book not found' });
-      }
-      res.json({ message: 'Book deleted' });
+      await Book.findByIdAndDelete(id);
+      res.status(200).json({ message: 'Book deleted successfully!' });
     } catch (error) {
       res.status(500).json({ message: error.message });
     }
-  }
+  },
+
+  // New updateBook method
+  updateBook: async (req, res) => {
+    const { id } = req.params;
+    const { title, author, description, imageUrl } = req.body;
+
+    try {
+      const updatedBook = await Book.findByIdAndUpdate(
+        id,
+        { title, author, description, imageUrl },
+        { new: true }
+      );
+      res.json(updatedBook);
+    } catch (error) {
+      res.status(400).json({ message: error.message });
+    }
+  },
 };
 
 export default booksController;

@@ -4,6 +4,7 @@ import booksController from '../controllers/booksController.js';  // Add the cor
 const router = express.Router();
 
 router.get('/', booksController.getAllBooks);
+router.put('/:id', booksController.updateBook);  // Add this line for updating a book
 router.post('/',booksController.createBook);
 router.delete('/:id', booksController.deleteBook);
 

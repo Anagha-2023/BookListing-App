@@ -1,9 +1,8 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
-import axios from 'axios';
-import { FaPlus } from 'react-icons/fa'; // Importing the plus icon
+import { FaPlus } from 'react-icons/fa';
 
 const validationSchema = yup.object().shape({
   title: yup.string().required('Title is required'),
@@ -11,42 +10,22 @@ const validationSchema = yup.object().shape({
   description: yup.string().required('Description is required'),
 });
 
-const BookForm = ({ onSubmit, setShowModal }) => {
-  const { register, handleSubmit, reset, formState: { errors } } = useForm({
+const BookForm = ({ onSubmit, initialData }) => {
+  const { register, handleSubmit, reset, formState: { errors }, setError } = useForm({
     resolver: yupResolver(validationSchema),
+    defaultValues: initialData || {}, // Populate the form with initialData for editing
   });
 
-  const [successMessage, setSuccessMessage] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
   const handleFormSubmit = async (data) => {
-    if (isSubmitting) return; // Prevent submitting again while already submitting
-    setIsSubmitting(true);
-  
-    try {
-      const createBookResponse = await axios.post('http://localhost:5000/api/books', data);
-      console.log("Book created successfully:", createBookResponse.data);
-      onSubmit(createBookResponse.data);
-      setSuccessMessage('Book added successfully!');
-      reset();
-      setTimeout(() => setShowModal(false), 2000);
-    } catch (error) {
-      console.error('Error creating book:', error);
-    } finally {
-      setIsSubmitting(false);
-    }
+    onSubmit(data, setError);
+    reset();  // Reset form fields after submission
   };
-  
 
   return (
     <div className="bg-white rounded-lg shadow-lg p-6">
-      <h2 className="text-2xl font-semibold mb-6 text-gray-800">Add New Book</h2>
-
-      {successMessage && (
-        <div className="p-4 mb-4 bg-green-100 text-green-800 border border-green-300 rounded">
-          {successMessage}
-        </div>
-      )}
+      <h2 className="text-2xl font-semibold mb-6 text-gray-800">
+        {initialData ? 'Edit Book' : 'Add New Book'}
+      </h2>
 
       <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-6">
         <div>
@@ -89,15 +68,12 @@ const BookForm = ({ onSubmit, setShowModal }) => {
         </div>
 
         <button
-  type="submit"
-  className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 flex items-center justify-center"
-  disabled={isSubmitting}
->
-  {isSubmitting ? 'Adding...' : 'Add Book'}  {/* Text appears first */}
-  <FaPlus className="inline-block ml-2 text-white text-lg" /> {/* Icon appears after the text */}
-</button>
-
-
+          type="submit"
+          className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 flex items-center justify-center"
+        >
+          {initialData ? 'Update Book' : 'Add Book'}
+          <FaPlus className="inline-block ml-2 text-white text-lg" />
+        </button>
       </form>
     </div>
   );
